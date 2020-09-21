@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/09/21 17:33:43 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/09/21 19:40:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/09/21 20:57:28 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ inline bool exists (const std::string& name) {
     return ( access( name.c_str(), F_OK ) != -1 );
 }
 
-bool	character_in_set(char c, string s)
+bool	characterInSet(char c, string s)
 {
 	for (int i = 0; i < s.size(); i++)
 		if (c == s[i])
@@ -89,7 +89,7 @@ void	initSourceFile(ofstream& source, string headerName)
 			string funct_definition = functions[i].substr(0, whitespace);
 			funct_definition += "\t";
 			int count = 0;
-			for (int j = whitespace; character_in_set(functions[i][j], "\t "); j++)
+			for (int j = whitespace; characterInSet(functions[i][j], "\t "); j++)
 				count++;
 			funct_definition += className;
 			funct_definition += "::";
@@ -167,37 +167,28 @@ int	main(int argc, char **argv)
 		return (error("Please provide atleast one file"));
 	for (int i = 1; i < argc; i++)
 	{
-		string raw(argv[1]);
+		string raw(argv[i]);
 		if (raw.size() <= 3)
 			continue ;
+		string sourceName;
+		string headerName;
+		ofstream	source;
 		if (int tmp = raw.find(".hpp") != string::npos && tmp + 3 == raw.size())
 		{
-			string sourceName = string(raw.substr(0, tmp) + string(".cpp"));
-			string headerName = raw;
-			ifstream	header(headerName.c_str());
-			ofstream	source(sourceName.c_str());
-			cerr << "INPUT check: " << header.bad() << endl;
-			cerr << "OUTPUT check: " << source.eof() << endl;
+			sourceName = string(raw.substr(0, tmp) + string(".cpp"));
+			headerName = raw;
+			source = ofstream(sourceName.c_str());
 		}
 		else
 		{
-			string sourceName = string(raw + string(".cpp"));
-			string headerName = string(raw + string(".hpp"));
-			ifstream	header(headerName.c_str());
-			ofstream	source(sourceName.c_str());
-			if (!exists(headerName))
-			{
-				cerr << "header not created yet" << endl;
-				header.close();
-
-				initHeaderFile(headerName);
-			}
-			if (fileSize(sourceName.c_str()) == 0)
-			{
-				cerr << "empty source file" << endl;
-				initSourceFile(source, headerName);
-			}
+			sourceName = string(raw + string(".cpp"));
+			headerName = string(raw + string(".hpp"));
+			source = ofstream(sourceName.c_str());
 		}
+		if (!exists(headerName))
+			initHeaderFile(headerName);
+		if (fileSize(sourceName.c_str()) == 0)
+			initSourceFile(source, headerName);
 	}
 	return (0);
 }
