@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/09/21 20:49:35 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/09/21 21:33:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/09/21 21:50:49 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ string	createGuard(string headerName)
 void	initHeaderFile(string headerName)
 {
 	ofstream header(headerName.c_str());
+	size_t	path_separator = headerName.find_last_of('/');
+	if (path_separator != string::npos)
+		headerName = headerName.substr(path_separator + 1, headerName.size());
 	string guard;
 	string coplien[] = {
 	"\tCLASS();\n",

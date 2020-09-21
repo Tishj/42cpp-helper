@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/09/21 20:55:39 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/09/21 21:32:54 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/09/21 21:55:09 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ void	initSourceFile(ofstream& source, string headerName)
 {
 	ifstream	header(headerName.c_str());
 
+	size_t	path_separator = headerName.find_last_of('/');
+	if (path_separator != string::npos)
+		headerName = headerName.substr(path_separator + 1, headerName.size());
 	source << "#include <" << headerName << ">\n\n";
 	source << "#include <string>\n";
 	source << "#include <iostream>\n\n";
@@ -49,7 +52,6 @@ void	initSourceFile(ofstream& source, string headerName)
 	}
 	for (size_t i = 0; i < functions.size(); i++)
 	{
-		cout << functions[i] << endl;
 		size_t	parenthesis = functions[i].find('(');
 		size_t	whitespace = functions[i].find_first_of(" \t");
 		if (whitespace < parenthesis && whitespace < functions[i].size())
