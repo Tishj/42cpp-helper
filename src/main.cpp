@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/09/21 20:47:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/09/21 22:07:16 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/09/23 21:25:18 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,19 @@ enum	e_extension
 	CPP,
 };
 
+enum e_extension	get_extension(size_t *extension, string input)
+{
+	*extension = input.find(".hpp");
+	if (*extension == string::npos)
+	{
+		*extension = input.find(".cpp");
+		if (*extension != string::npos)
+			return (CPP);
+		return (NONE);
+	}
+	return (HPP);
+}
+
 int	main(int argc, char **argv)
 {
 	if (argc == 1)
@@ -31,35 +44,30 @@ int	main(int argc, char **argv)
 	for (int i = 1; i < argc; i++)
 	{
 		string raw(argv[i]);
-		if (raw.size() <= 3)
-			continue ;
 		string sourceName;
 		string headerName;
-		size_t	extension = raw.find(".hpp");
-		e_extension	ext = NONE;
-		if (extension == string::npos)
-		{
-			extension = raw.find(".hpp");
-			if (extension != string::npos)
-				ext = CPP;
-		}
-		else
-			ext = HPP;
+
+		size_t	ext_index;
+		e_extension	ext = get_extension(&ext_index, raw);
 		if (ext != NONE)
 		{
-			sourceName = string(raw.substr(0, extension) + string(".cpp"));
-			headerName = string(raw.substr(0, extension) + string(".hpp"));
+			sourceName = string(raw.substr(0, ext_index) + string(".cpp"));
+			headerName = string(raw.substr(0, ext_index) + string(".hpp"));
 		}
 		else
 		{
 			sourceName = string(raw + string(".cpp"));
 			headerName = string(raw + string(".hpp"));
 		}
-		ofstream source(sourceName.c_str());
 		if (!exists(headerName))
 			initHeaderFile(headerName);
 		if (fileSize(sourceName.c_str()) == 0)
+		{
+			ofstream source(sourceName.c_str());
 			initSourceFile(source, headerName);
+		}
+		else
+			updateSourceFile(sourceName, headerName);
 	}
 	return (0);
 }

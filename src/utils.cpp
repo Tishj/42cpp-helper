@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/09/21 20:50:11 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/09/21 21:32:37 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/09/23 19:19:02 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ std::streampos fileSize(const char* filePath)
 	fsize = file.tellg() - fsize;
 	file.close();
 
+	cerr << "Source(" << filePath << ") filesize: " << fsize << endl;
 	return fsize;
 }
 
