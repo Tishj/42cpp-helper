@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/09/21 20:55:39 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/09/23 21:44:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/10/20 15:52:10 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void	initSourceFile(ofstream& source, string headerName)
 
 	string	buf;
 	bool functsFound = false;
-	for (;getline(header, buf, '\n');!header.eof())
+	while (getline(header, buf))
 	{
 		if (buf.find("}") != string::npos)
 			break ;
@@ -135,6 +135,8 @@ void	initSourceFile(ofstream& source, string headerName)
 		}
 		if (buf.find("public:") != string::npos)
 			functsFound = true;
+		if (header.eof())
+			break ;
 	}
 	for (size_t i = 0; i < functions.size(); i++)
 	{
