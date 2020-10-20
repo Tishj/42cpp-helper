@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/09/21 20:47:31 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/09/23 21:25:18 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/10/20 16:27:42 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <string>
 #include <42cpp_helper.hpp>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -37,27 +38,50 @@ enum e_extension	get_extension(size_t *extension, string input)
 	return (HPP);
 }
 
+void	sanitize_args(std::vector<std::string>& args, char **argv)
+{
+	bool newArg = true;
+
+	for (size_t i = 1; argv[i]; i++)
+	{
+		for (size_t j = 0; argv[i][j]; j++)
+		{
+			if (isalnum(argv[i][j]) || argv[i][j] == '.')
+			{
+				if (newArg)
+					args.push_back(std::string());
+				args[args.size() - 1] += argv[i][j];
+				newArg = false;
+			}
+			else
+				newArg = true;
+		}
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	if (argc == 1)
 		return (error("Please provide atleast one file"));
-	for (int i = 1; i < argc; i++)
+	std::vector<std::string> args;
+
+	sanitize_args(args, argv);
+	for (size_t i = 0; i < args.size(); i++)
 	{
-		string raw(argv[i]);
 		string sourceName;
 		string headerName;
 
 		size_t	ext_index;
-		e_extension	ext = get_extension(&ext_index, raw);
+		e_extension	ext = get_extension(&ext_index, args[i]);
 		if (ext != NONE)
 		{
-			sourceName = string(raw.substr(0, ext_index) + string(".cpp"));
-			headerName = string(raw.substr(0, ext_index) + string(".hpp"));
+			sourceName = string(args[i].substr(0, ext_index) + string(".cpp"));
+			headerName = string(args[i].substr(0, ext_index) + string(".hpp"));
 		}
 		else
 		{
-			sourceName = string(raw + string(".cpp"));
-			headerName = string(raw + string(".hpp"));
+			sourceName = string(args[i] + string(".cpp"));
+			headerName = string(args[i] + string(".hpp"));
 		}
 		if (!exists(headerName))
 			initHeaderFile(headerName);
